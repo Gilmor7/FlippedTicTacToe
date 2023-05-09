@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameEngine.cs" />
+    <Compile Include="GameStatus.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Symbols.cs" />
