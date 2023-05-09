@@ -4,6 +4,7 @@
     {
         InProgress,
         Draw,
-        PlayerWon
+        Player1Win,
+        Player2Win
     }
 }
