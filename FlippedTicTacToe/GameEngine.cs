@@ -29,14 +29,21 @@ namespace FlippedTicTacToe
             }
         }
 
-        public void InitializeGameStatus()
-        {
-            m_GameStatus = eGameStatus.InProgress;
-        }
-
         public GameBoard GetGameBoard()
         {
             return m_Board;
+        }
+
+        public void RestartGame()
+        {
+            m_Board.ResetBoard();
+            initializeGameStatus();
+            m_CurrentPlayer = m_Player1;
+        }
+
+        private void initializeGameStatus()
+        {
+            m_GameStatus = eGameStatus.InProgress;
         }
 
         public void MakeMove(Cell i_SelectedCell)
@@ -50,7 +57,7 @@ namespace FlippedTicTacToe
                 }
 
                 m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
-                updateGameStatusIfNeeded(i_SelectedCell);
+                updateGameStatusAndScoreIfNeeded(i_SelectedCell);
                 switchCurrentPlayer();
             }
             catch(Exception e)
@@ -64,7 +71,7 @@ namespace FlippedTicTacToe
             List<Cell> availableCells = m_Board.GetAllAvailableCells();
             Cell selectedCell = selectRandomCellFromList(availableCells);
             m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
-            updateGameStatusIfNeeded(selectedCell);
+            updateGameStatusAndScoreIfNeeded(selectedCell);
             switchCurrentPlayer();
         }
 
@@ -76,14 +83,23 @@ namespace FlippedTicTacToe
             return i_CellsList[randomListItemIndex];
         }
 
-        private void updateGameStatusIfNeeded(Cell i_SelectedCell)
+        private void updateGameStatusAndScoreIfNeeded(Cell i_SelectedCell)
         {
             bool isCurrentPlayerLoose = checkIfCurrentPlayerLoose(i_SelectedCell);
             bool isBoardFull = m_Board.isBoardFull();
 
             if (isCurrentPlayerLoose)
             {
-                m_GameStatus = m_CurrentPlayer == m_Player1 ? eGameStatus.Player2Win : eGameStatus.Player1Win;
+                if(m_CurrentPlayer == m_Player1)
+                {
+                    m_GameStatus = eGameStatus.Player2Win;
+                    m_Player2.Score++;
+                }
+                else
+                {
+                    m_GameStatus = eGameStatus.Player1Win;
+                    m_Player1.Score++;
+                }
             }
             else if (isBoardFull)
             {
