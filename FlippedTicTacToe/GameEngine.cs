@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FlippedTicTacToe
 {
@@ -60,12 +61,19 @@ namespace FlippedTicTacToe
 
         public void MakeRandomMove()
         {
-            //moves = getAllPossibleMoves
-            //selectRandomMove
-            //selectedCell = selectRandomCellFromList();
-            //m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
-            //updateGameStatusIfNeeded(selectedCell);
-            //switchCurrentPlayer();
+            List<Cell> availableCells = m_Board.GetAllAvailableCells();
+            Cell selectedCell = selectRandomCellFromList(availableCells);
+            m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
+            updateGameStatusIfNeeded(selectedCell);
+            switchCurrentPlayer();
+        }
+
+        private static Cell selectRandomCellFromList(List<Cell> i_CellsList)
+        {
+            Random rand = new Random();
+            int randomListItemIndex = rand.Next(i_CellsList.Count);
+
+            return i_CellsList[randomListItemIndex];
         }
 
         private void updateGameStatusIfNeeded(Cell i_SelectedCell)

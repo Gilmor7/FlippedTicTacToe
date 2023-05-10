@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FlippedTicTacToe
 {
@@ -180,6 +181,24 @@ namespace FlippedTicTacToe
             }
 
             return singleSymbolFullSequenceFound;
+        }
+
+        public List<Cell> GetAllAvailableCells()
+        {
+            List<Cell> availableCells = new List<Cell>();
+
+            for (uint i = 0; i < m_MatrixWidth; i++)
+            {
+                for (uint j = 0; j < m_MatrixWidth; j++)
+                {
+                    if (m_GameBoard[i, j] == eSymbols.Empty)
+                    {
+                        availableCells.Add(new Cell(i, j));
+                    }
+                }
+            }
+
+            return availableCells;
         }
 
     }
