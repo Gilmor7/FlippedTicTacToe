@@ -29,9 +29,34 @@ namespace FlippedTicTacToe
             }
         }
 
-        public GameBoard GetGameBoard()
+        public GameBoard GameBoard
         {
-            return m_Board;
+            get
+            {
+                return m_Board;
+            }
+        }
+
+        public void setGameBoardBySize(uint i_BoardSize)
+        {
+            if (RulesValidator.IsBoardSizeValid(i_BoardSize))
+            {
+                m_Board = new GameBoard(i_BoardSize);
+            }
+            else
+            {
+                throw new ArgumentException("Board size must be in range of 3-9 (inclusive)!");
+            }
+        }
+
+        public void setFirstPlayer()
+        {
+            m_Player1 = new Player(eSymbols.X, false);
+        }
+
+        public void setSecondPlayer(bool i_IsComputer)
+        {
+            m_Player2 = new Player(eSymbols.O, i_IsComputer);
         }
 
         public void RestartGame()
@@ -131,7 +156,7 @@ namespace FlippedTicTacToe
 
         public class RulesValidator
         { 
-            public static bool IsBoardSizeValid(int i_BoardSize)
+            public static bool IsBoardSizeValid(uint i_BoardSize)
             {
                 return i_BoardSize >= k_MinBoardSize && i_BoardSize <= k_MaxBoardSize;
             }

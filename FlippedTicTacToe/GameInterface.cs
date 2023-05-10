@@ -1,4 +1,5 @@
 ﻿using System;
+using Ex02.ConsoleUtils;
 
 namespace FlippedTicTacToe
 {
@@ -16,8 +17,8 @@ namespace FlippedTicTacToe
 
             public static bool ValidateBoardInput(string i_BoardSize)
             {
-                int boardSize;
-                return int.TryParse(i_BoardSize, out boardSize);
+                uint boardSize;
+                return uint.TryParse(i_BoardSize, out boardSize);
             }
 
             public static bool ValidateUserMove(string i_RowMove, string i_ColMove)
@@ -63,6 +64,45 @@ namespace FlippedTicTacToe
             }
         }
 
+        private class UserInterfaceConverter
+        {
+            public static bool convertYesOrNoToBool(string i_UserInput)
+            {
+                bool isYes;
+                string userInputUpperCase = i_UserInput.ToUpper();
+                if (userInputUpperCase == "Y")
+                {
+                    isYes = true;
+                }
+                else
+                {
+                    isYes = false;
+                }
+
+                return isYes;
+            }
+
+            public static char ConvertSymbolToChar(eSymbols i_Symbol)
+            {
+                char symbol;
+                switch (i_Symbol)
+                {
+                    case eSymbols.Empty:
+                        symbol = ' ';
+                        break;
+                    case eSymbols.X:
+                        symbol = 'X';
+                        break;
+                    case eSymbols.O:
+                        symbol = 'O';
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(i_Symbol), i_Symbol, "Invalid symbol value");
+                }
+                return symbol;
+            }
+        }
+
         public static void Play()
         {
             bool stillPlaying = true;
@@ -91,5 +131,78 @@ namespace FlippedTicTacToe
 
             Console.WriteLine("Thanks for playing! Goodbye :)");
         }
-    }
+
+        private static void displayBoard()
+        {
+            Screen.Clear();
+            // display screen here, use Symbol to Char in Converter class
+        }
+
+        private static void setInitialGameSettings()
+        {
+            setGameBoard();
+            setPlayers();
+        }
+
+        private static void setGameBoard()
+        {
+            const bool k_WaitingForValidInput = true;
+            while (k_WaitingForValidInput)
+            {
+                try
+                {
+                    string userInput = UserInputRequester.RequestBoardSizeInput();
+                    bool isInputValid = UserInputValidator.ValidateBoardInput(userInput);
+                    if (isInputValid)
+                    {
+                        uint boardSize = uint.Parse(userInput);
+                        s_GameEngine.setGameBoardBySize(boardSize);
+                        break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Try again!");
+                }
+            }
+        }
+
+        private static void setPlayers()
+        {
+            setFirstPlayer();
+            setSecondPlayer();
+        }
+
+        private static void setFirstPlayer()
+        {
+            s_GameEngine.setFirstPlayer();
+        }
+
+        private static void setSecondPlayer()
+        {
+            const bool k_WaitingForValidInput = true;
+            while (k_WaitingForValidInput)
+            {
+                try
+                {
+                    string userInput = UserInputRequester.RequestIfSecondPlayerIsBot();
+                    bool isInputValid = UserInputValidator.ValidateYesOrNoInput(userInput);
+                    if (isInputValid)
+                    {
+                        bool usersAnswer = UserInterfaceConverter.convertYesOrNoToBool(userInput);
+                        s_GameEngine.setSecondPlayer(usersAnswer);
+                        break;
+                    }
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Try again!");
+                }
+            }
+        }
+
+        
+    }   
 }

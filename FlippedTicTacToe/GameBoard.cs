@@ -40,6 +40,16 @@ namespace FlippedTicTacToe
             }
         }
 
+        public eSymbols GetSymbolAtIndex(uint i_Row, uint i_Col)
+        {
+            bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+            if (indicesAreValid)
+            {
+                return m_GameBoard[i_Row, i_Col];
+            }
+            throw new IndexOutOfRangeException("Indices are out of range!");
+        }
+
         public void ResetBoard()
         {
             for (uint i = 0; i < m_MatrixWidth; i++)
@@ -62,7 +72,7 @@ namespace FlippedTicTacToe
             }
             else
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException("Indices are out of range!");
             }
         }
 
@@ -75,7 +85,7 @@ namespace FlippedTicTacToe
             }
             else
             {
-                throw new IndexOutOfRangeException();
+                throw new IndexOutOfRangeException("Indices are out of range!");
             }
         }
 
