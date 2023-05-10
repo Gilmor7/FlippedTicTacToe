@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace FlippedTicTacToe
 {
@@ -28,14 +29,21 @@ namespace FlippedTicTacToe
             }
         }
 
-        public void InitializeGameStatus()
-        {
-            m_GameStatus = eGameStatus.InProgress;
-        }
-
         public GameBoard GetGameBoard()
         {
             return m_Board;
+        }
+
+        public void RestartGame()
+        {
+            m_Board.ResetBoard();
+            initializeGameStatus();
+            m_CurrentPlayer = m_Player1;
+        }
+
+        private void initializeGameStatus()
+        {
+            m_GameStatus = eGameStatus.InProgress;
         }
 
         public void MakeMove(Cell i_SelectedCell)
@@ -49,7 +57,7 @@ namespace FlippedTicTacToe
                 }
 
                 m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
-                updateGameStatus(i_SelectedCell);
+                updateGameStatusAndScoreIfNeeded(i_SelectedCell);
                 switchCurrentPlayer();
             }
             catch(Exception e)
@@ -60,18 +68,38 @@ namespace FlippedTicTacToe
 
         public void MakeRandomMove()
         {
-            //moves = getAllPossibleMoves
-            //selectRandomMove
-            //call MakeMove
+            List<Cell> availableCells = m_Board.GetAllAvailableCells();
+            Cell selectedCell = selectRandomCellFromList(availableCells);
+            m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
+            updateGameStatusAndScoreIfNeeded(selectedCell);
+            switchCurrentPlayer();
         }
 
-        private void updateGameStatus(Cell i_SelectedCell)
+        private static Cell selectRandomCellFromList(List<Cell> i_CellsList)
+        {
+            Random rand = new Random();
+            int randomListItemIndex = rand.Next(i_CellsList.Count);
+
+            return i_CellsList[randomListItemIndex];
+        }
+
+        private void updateGameStatusAndScoreIfNeeded(Cell i_SelectedCell)
         {
             bool isCurrentPlayerLoose = checkIfCurrentPlayerLoose(i_SelectedCell);
             bool isBoardFull = m_Board.isBoardFull();
+
             if (isCurrentPlayerLoose)
             {
-                m_GameStatus = m_CurrentPlayer == m_Player1 ? eGameStatus.Player2Win : eGameStatus.Player1Win;
+                if(m_CurrentPlayer == m_Player1)
+                {
+                    m_GameStatus = eGameStatus.Player2Win;
+                    m_Player2.Score++;
+                }
+                else
+                {
+                    m_GameStatus = eGameStatus.Player1Win;
+                    m_Player1.Score++;
+                }
             }
             else if (isBoardFull)
             {
@@ -93,12 +121,12 @@ namespace FlippedTicTacToe
 
         private bool checkIfCurrentPlayerLoose(Cell i_SelectedCell)
         {
-            //check sequence in row 
+            bool isSingleSymbolFullSequenceFound = 
+                m_Board.CheckForSingleSymbolFullSequenceInRow(i_SelectedCell.Row, m_CurrentPlayer.Symbol) ||
+                m_Board.CheckForSingleSymbolFullSequenceInColumn(i_SelectedCell.Row, m_CurrentPlayer.Symbol) ||
+                m_Board.CheckForSingleSymbolFullSequenceInDiagonal(i_SelectedCell, m_CurrentPlayer.Symbol);
 
-            //check Sequence in Col
-
-            //check Sequence in diagonal
-            return false;
+            return isSingleSymbolFullSequenceFound;
         }
 
         public class RulesValidator
