@@ -4,7 +4,6 @@ namespace FlippedTicTacToe
 {
     public class Player
     {
-        private uint id;
         private uint m_Score = 0;
         private readonly eSymbols m_Symbol;
         private readonly bool m_IsComputer;

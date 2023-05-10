@@ -111,5 +111,76 @@ namespace FlippedTicTacToe
                 m_NumberOfEmptyCells++;
             }
         }
+
+        public bool CheckForSingleSymbolFullSequenceInRow(uint i_Row, eSymbols i_Symbol)
+        {
+            bool singleSymbolFullSequenceFound = true;
+
+            for(int i = 0; i < m_MatrixWidth; i++)
+            {
+                if(m_GameBoard[i_Row, i] != i_Symbol)
+                {
+                    singleSymbolFullSequenceFound = false;
+                    break;
+                }
+            }
+
+            return singleSymbolFullSequenceFound;
+        }
+
+        public bool CheckForSingleSymbolFullSequenceInColumn(uint i_Col, eSymbols i_Symbol)
+        {
+            bool singleSymbolFullSequenceFound = true;
+
+            for (int i = 0; i < m_MatrixWidth; i++)
+            {
+                if (m_GameBoard[i, i_Col] != i_Symbol)
+                {
+                    singleSymbolFullSequenceFound = false;
+                    break;
+                }
+            }
+
+            return singleSymbolFullSequenceFound;
+        }
+
+        public bool CheckForSingleSymbolFullSequenceInDiagonal(Cell i_Cell, eSymbols i_Symbol)
+        {
+            bool singleSymbolFullSequenceFound = true;
+            bool isCellOnMainDiagonal = i_Cell.Row == i_Cell.Column;
+            bool isCellOnSecondaryDiagonal = i_Cell.Row + i_Cell.Column == (m_MatrixWidth - 1);
+
+            if(isCellOnMainDiagonal)
+            {
+                for (int i = 0; i < m_MatrixWidth; i++)
+                {
+                    if (m_GameBoard[i, i] != i_Symbol)
+                    {
+                        singleSymbolFullSequenceFound = false;
+                        break;
+                    }
+                }
+            }
+            else if(isCellOnSecondaryDiagonal)
+            {
+                for (int i = 0; i < m_MatrixWidth; i++)
+                {
+                    int row = (int)m_MatrixWidth - i - 1;
+
+                    if (m_GameBoard[row, i] != i_Symbol)
+                    {
+                        singleSymbolFullSequenceFound = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                singleSymbolFullSequenceFound = false;
+            }
+
+            return singleSymbolFullSequenceFound;
+        }
+
     }
 }

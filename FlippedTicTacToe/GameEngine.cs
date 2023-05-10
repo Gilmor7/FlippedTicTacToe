@@ -49,7 +49,7 @@ namespace FlippedTicTacToe
                 }
 
                 m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
-                updateGameStatus(i_SelectedCell);
+                updateGameStatusIfNeeded(i_SelectedCell);
                 switchCurrentPlayer();
             }
             catch(Exception e)
@@ -62,13 +62,17 @@ namespace FlippedTicTacToe
         {
             //moves = getAllPossibleMoves
             //selectRandomMove
-            //call MakeMove
+            //selectedCell = selectRandomCellFromList();
+            //m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
+            //updateGameStatusIfNeeded(selectedCell);
+            //switchCurrentPlayer();
         }
 
-        private void updateGameStatus(Cell i_SelectedCell)
+        private void updateGameStatusIfNeeded(Cell i_SelectedCell)
         {
             bool isCurrentPlayerLoose = checkIfCurrentPlayerLoose(i_SelectedCell);
             bool isBoardFull = m_Board.isBoardFull();
+
             if (isCurrentPlayerLoose)
             {
                 m_GameStatus = m_CurrentPlayer == m_Player1 ? eGameStatus.Player2Win : eGameStatus.Player1Win;
@@ -93,12 +97,12 @@ namespace FlippedTicTacToe
 
         private bool checkIfCurrentPlayerLoose(Cell i_SelectedCell)
         {
-            //check sequence in row 
+            bool isSingleSymbolFullSequenceFound = 
+                m_Board.CheckForSingleSymbolFullSequenceInRow(i_SelectedCell.Row, m_CurrentPlayer.Symbol) ||
+                m_Board.CheckForSingleSymbolFullSequenceInColumn(i_SelectedCell.Row, m_CurrentPlayer.Symbol) ||
+                m_Board.CheckForSingleSymbolFullSequenceInDiagonal(i_SelectedCell, m_CurrentPlayer.Symbol);
 
-            //check Sequence in Col
-
-            //check Sequence in diagonal
-            return false;
+            return isSingleSymbolFullSequenceFound;
         }
 
         public class RulesValidator
