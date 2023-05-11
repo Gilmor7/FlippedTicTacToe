@@ -1,7 +1,8 @@
 ﻿using System;
 using Ex02.ConsoleUtils;
+using FlippedTicTacToe;
 
-namespace FlippedTicTacToe
+namespace FlippedTicTacToeInterface
 {
     public class GameInterface
     {
@@ -45,7 +46,7 @@ namespace FlippedTicTacToe
 
             public static string RequestIfSecondPlayerIsBot()
             {
-                Console.WriteLine("Do you want to play aginst a real player? [Y/N]");
+                Console.WriteLine("Do you want to play against a real player? [Y/N]");
                 return Console.ReadLine();
             }
 
@@ -64,7 +65,7 @@ namespace FlippedTicTacToe
             }
         }
 
-        private class UserInterfaceConverter
+        internal class UserInterfaceConverter
         {
             public static bool ConvertYesOrNoToBool(string i_UserInput)
             {
@@ -133,8 +134,10 @@ namespace FlippedTicTacToe
 
         private static void displayBoard()
         {
+            eSymbols[,] board = s_GameEngine.GameBoard.Board;
+
             Screen.Clear();
-            // display screen here, use Symbol to Char in Converter class
+            GameConsoleUtils.PrintBoard(board);
         }
 
         private static void setInitialGameSettings()

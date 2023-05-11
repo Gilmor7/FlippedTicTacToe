@@ -37,6 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameConsoleUtils.cs" />
+    <Compile Include="GameInterface.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +45,12 @@
       <Project>{c0d20469-e49e-4ec6-997a-8c20cf7c2d4c}</Project>
       <Name>FlippedTicTacToe</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ex02.ConsoleUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\Temp\Ex02.ConsoleUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

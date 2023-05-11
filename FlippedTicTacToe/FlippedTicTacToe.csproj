@@ -43,12 +43,6 @@
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Symbols.cs" />
-    <Compile Include="GameInterface.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Ex02.ConsoleUtils">
-      <HintPath>Ex02.ConsoleUtils.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
