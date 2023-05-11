@@ -29,6 +29,7 @@ namespace FlippedTicTacToe
             get
             {
                 eSymbols[,] deepCopy = new eSymbols[m_MatrixWidth, m_MatrixWidth];
+
                 for (uint i = 0; i < m_MatrixWidth; i++)
                 {
                     for (uint j = 0; j < m_MatrixWidth; j++)
@@ -36,6 +37,7 @@ namespace FlippedTicTacToe
                         deepCopy[i, j] = m_GameBoard[i, j];
                     }
                 }
+
                 return deepCopy;
             }
         }
@@ -43,11 +45,13 @@ namespace FlippedTicTacToe
         public eSymbols GetSymbolAtIndex(uint i_Row, uint i_Col)
         {
             bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
-            if (indicesAreValid)
+
+            if (!indicesAreValid)
             {
-                return m_GameBoard[i_Row, i_Col];
+                throw new IndexOutOfRangeException("Indices are out of range!");
             }
-            throw new IndexOutOfRangeException("Indices are out of range!");
+           
+            return m_GameBoard[i_Row, i_Col];
         }
 
         public void ResetBoard()
@@ -59,16 +63,18 @@ namespace FlippedTicTacToe
                     m_GameBoard[i, j] = eSymbols.Empty;
                 }
             }
+
             m_NumberOfEmptyCells = m_MatrixWidth * m_MatrixWidth;
         }
 
-        public void UpdateCell(uint i_Row, uint i_Col, eSymbols i_symbol)
+        public void UpdateCell(uint i_Row, uint i_Col, eSymbols i_Symbol)
         {
             bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+
             if (indicesAreValid)
             {
-                updateNumberOfEmptyCells(m_GameBoard[i_Row, i_Col], i_symbol);
-                m_GameBoard[i_Row, i_Col] = i_symbol;
+                updateNumberOfEmptyCells(m_GameBoard[i_Row, i_Col], i_Symbol);
+                m_GameBoard[i_Row, i_Col] = i_Symbol;
             }
             else
             {
@@ -79,6 +85,7 @@ namespace FlippedTicTacToe
         public bool CheckIfCellIsEmpty(uint i_Row, uint i_Col)
         {
             bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+
             if (indicesAreValid)
             {
                 return m_GameBoard[i_Row, i_Col] == eSymbols.Empty;
@@ -93,12 +100,13 @@ namespace FlippedTicTacToe
         {
             bool rowCheck = checkIfIndexIsInRange(i_Row);
             bool colCheck = checkIfIndexIsInRange(i_Col);
+
             return rowCheck && colCheck;
         }
 
         private bool checkIfIndexIsInRange(uint i_Index)
         {
-            return 0 <= i_Index && i_Index < m_MatrixWidth;
+            return i_Index < m_MatrixWidth;
         }
 
         public bool IsBoardEmpty()
@@ -106,7 +114,7 @@ namespace FlippedTicTacToe
             return m_NumberOfEmptyCells == m_MatrixWidth * m_MatrixWidth;
         }
 
-        public bool isBoardFull()
+        public bool IsBoardFull()
         {
             return m_NumberOfEmptyCells == 0;
         }
@@ -210,6 +218,5 @@ namespace FlippedTicTacToe
 
             return availableCells;
         }
-
     }
 }

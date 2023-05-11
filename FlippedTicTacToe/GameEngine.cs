@@ -76,9 +76,10 @@ namespace FlippedTicTacToe
             try
             {
                 bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell.Row, i_SelectedCell.Column);
+
                 if(!isCellEmpty)
                 {
-                    throw new Exception("The specified cell is already taken");
+                    throw new ArgumentException("The specified cell is already taken");
                 }
 
                 m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
@@ -95,6 +96,7 @@ namespace FlippedTicTacToe
         {
             List<Cell> availableCells = m_Board.GetAllAvailableCells();
             Cell selectedCell = selectRandomCellFromList(availableCells);
+
             m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
             updateGameStatusAndScoreIfNeeded(selectedCell);
             switchCurrentPlayer();
@@ -111,7 +113,7 @@ namespace FlippedTicTacToe
         private void updateGameStatusAndScoreIfNeeded(Cell i_SelectedCell)
         {
             bool isCurrentPlayerLoose = checkIfCurrentPlayerLoose(i_SelectedCell);
-            bool isBoardFull = m_Board.isBoardFull();
+            bool isBoardFull = m_Board.IsBoardFull();
 
             if (isCurrentPlayerLoose)
             {

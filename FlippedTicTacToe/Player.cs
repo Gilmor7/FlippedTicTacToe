@@ -5,13 +5,13 @@ namespace FlippedTicTacToe
     public class Player
     {
         private uint m_Score = 0;
-        private readonly eSymbols m_Symbol;
-        private readonly bool m_IsComputer;
+        private readonly eSymbols r_Symbol;
+        private readonly bool r_IsComputer;
 
         public Player(eSymbols i_Symbol, bool i_IsComputer)
         {
-            m_Symbol = i_Symbol;
-            m_IsComputer = i_IsComputer;
+            r_Symbol = i_Symbol;
+            r_IsComputer = i_IsComputer;
         }
 
         public uint Score
@@ -30,7 +30,7 @@ namespace FlippedTicTacToe
         {
             get
             {
-                return m_Symbol;
+                return r_Symbol;
             }
         }
 
@@ -38,7 +38,7 @@ namespace FlippedTicTacToe
         {
             get
             {
-                return m_IsComputer;
+                return r_IsComputer;
             }
         }
     }
