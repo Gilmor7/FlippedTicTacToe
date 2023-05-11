@@ -66,7 +66,7 @@ namespace FlippedTicTacToe
 
         private class UserInterfaceConverter
         {
-            public static bool convertYesOrNoToBool(string i_UserInput)
+            public static bool ConvertYesOrNoToBool(string i_UserInput)
             {
                 bool isYes;
                 string userInputUpperCase = i_UserInput.ToUpper();
@@ -108,7 +108,6 @@ namespace FlippedTicTacToe
             bool stillPlaying = true;
 
             setInitialGameSettings();
-
             while (stillPlaying)
             {
                 displayBoard();
@@ -119,7 +118,7 @@ namespace FlippedTicTacToe
                     bool userWantsToRestartGame = askIfUserWantsToRestartGame();    
                     if (askIfUserWantsToResetGame())
                     {
-                        GameEngine.ResetGame();
+                        s_GameEngine.RestartGame();
                     }
                     else
                     {
@@ -146,18 +145,21 @@ namespace FlippedTicTacToe
 
         private static void setGameBoard()
         {
-            const bool k_WaitingForValidInput = true;
-            while (k_WaitingForValidInput)
+            bool waitingForValidInput = true;
+
+            while (waitingForValidInput)
             {
                 try
                 {
                     string userInput = UserInputRequester.RequestBoardSizeInput();
                     bool isInputValid = UserInputValidator.ValidateBoardInput(userInput);
+
                     if (isInputValid)
                     {
                         uint boardSize = uint.Parse(userInput);
-                        s_GameEngine.setGameBoardBySize(boardSize);
-                        break;
+
+                        s_GameEngine.SetGameBoardSize(boardSize);
+                        waitingForValidInput = false;
                     }
                 }
                 catch (Exception e)
@@ -176,23 +178,26 @@ namespace FlippedTicTacToe
 
         private static void setFirstPlayer()
         {
-            s_GameEngine.setFirstPlayer();
+            s_GameEngine.SetFirstPlayer();
         }
 
         private static void setSecondPlayer()
         {
-            const bool k_WaitingForValidInput = true;
-            while (k_WaitingForValidInput)
+            bool waitingForValidInput = true;
+
+            while (waitingForValidInput)
             {
                 try
                 {
                     string userInput = UserInputRequester.RequestIfSecondPlayerIsBot();
                     bool isInputValid = UserInputValidator.ValidateYesOrNoInput(userInput);
+
                     if (isInputValid)
                     {
-                        bool usersAnswer = UserInterfaceConverter.convertYesOrNoToBool(userInput);
-                        s_GameEngine.setSecondPlayer(usersAnswer);
-                        break;
+                        bool usersAnswer = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
+
+                        s_GameEngine.SetSecondPlayer(usersAnswer);
+                        waitingForValidInput = false;
                     }
                 }
                 catch(Exception e)
@@ -202,7 +207,5 @@ namespace FlippedTicTacToe
                 }
             }
         }
-
-        
     }   
 }

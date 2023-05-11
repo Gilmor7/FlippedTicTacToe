@@ -37,7 +37,7 @@ namespace FlippedTicTacToe
             }
         }
 
-        public void setGameBoardBySize(uint i_BoardSize)
+        public void SetGameBoardSize(uint i_BoardSize)
         {
             if (RulesValidator.IsBoardSizeValid(i_BoardSize))
             {
@@ -49,12 +49,12 @@ namespace FlippedTicTacToe
             }
         }
 
-        public void setFirstPlayer()
+        public void SetFirstPlayer()
         {
             m_Player1 = new Player(eSymbols.X, false);
         }
 
-        public void setSecondPlayer(bool i_IsComputer)
+        public void SetSecondPlayer(bool i_IsComputer)
         {
             m_Player2 = new Player(eSymbols.O, i_IsComputer);
         }
