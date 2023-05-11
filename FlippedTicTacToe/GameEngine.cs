@@ -21,6 +21,22 @@ namespace FlippedTicTacToe
             }
         }
 
+        public Player Player1
+        {
+            get
+            {
+                return m_Player1;
+            }
+        }
+
+        public Player Player2
+        {
+            get
+            {
+                return m_Player2;
+            }
+        }
+
         public eGameStatus GameStatus
         {
             get
@@ -52,6 +68,7 @@ namespace FlippedTicTacToe
         public void SetFirstPlayer()
         {
             m_Player1 = new Player(eSymbols.X, false);
+            m_CurrentPlayer = m_Player1;
         }
 
         public void SetSecondPlayer(bool i_IsComputer)

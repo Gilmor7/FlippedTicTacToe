@@ -7,12 +7,8 @@ namespace FlippedTicTacToeInterface
     {
         public static void Main()
         {
-            GameEngine g = new GameEngine();
-            g.SetFirstPlayer();
-            g.SetSecondPlayer(false);
-            g.SetGameBoardSize(8);
-            g.RestartGame();
-            GameConsoleUtils.PrintBoard(g.GameBoard.Board);
+            GameInterface gameInterface = new GameInterface();
+            gameInterface.InitGame();
         }
     }
 }

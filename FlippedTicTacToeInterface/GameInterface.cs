@@ -6,7 +6,7 @@ namespace FlippedTicTacToeInterface
 {
     public class GameInterface
     {
-        private static GameEngine s_GameEngine = null;
+        private GameEngine m_GameEngine = new GameEngine();
 
         private class UserInputValidator
         {
@@ -22,12 +22,6 @@ namespace FlippedTicTacToeInterface
                 return uint.TryParse(i_BoardSize, out boardSize);
             }
 
-            public static bool ValidateUserMove(string i_RowMove, string i_ColMove)
-            {
-                int rowNumber, colNumber;
-
-                return int.TryParse(i_RowMove, out rowNumber) && int.TryParse(i_ColMove, out colNumber);
-            }
         }
 
         private class UserInputRequester
@@ -50,19 +44,18 @@ namespace FlippedTicTacToeInterface
                 return Console.ReadLine();
             }
 
-            public static (string, string) RequestUserMove()
+            public static string RequestUserNextMoveColumn()
             {
-                string rowNumberString;
-                string colNumberString;
-
-                Console.WriteLine("Enter row number: ");
-                rowNumberString = Console.ReadLine();
-
-                Console.WriteLine("Enter col number: ");
-                colNumberString = Console.ReadLine();
-
-                return (rowNumberString, colNumberString);
+                Console.WriteLine("Enter column number: ");
+                return Console.ReadLine();
             }
+
+            public static string RequestUserNextMoveRow()
+            {
+                Console.WriteLine("Enter row number: ");
+                return Console.ReadLine();
+            }
+
         }
 
         internal class UserInterfaceConverter
@@ -104,22 +97,26 @@ namespace FlippedTicTacToeInterface
             }
         }
 
-        public static void Play()
+        public void InitGame()
         {
             bool stillPlaying = true;
 
             setInitialGameSettings();
+            displayStartingAnnouncement();
+            displayBoard();
             while (stillPlaying)
             {
+                playNextMove();
                 displayBoard();
-                makeCurrPlayerMove();
-                if(GameEngine.GameStatus == "OVER")
+                if (m_GameEngine.GameStatus != eGameStatus.InProgress)
                 {
-                    displayGameOverScreen();
-                    bool userWantsToRestartGame = askIfUserWantsToRestartGame();    
-                    if (askIfUserWantsToResetGame())
+                    displayGameOverScreen(m_GameEngine.GameStatus);
+                    bool shouldRestartGame = askUserIfShouldRestartGame();
+
+                    if (shouldRestartGame)
                     {
-                        s_GameEngine.RestartGame();
+                        m_GameEngine.RestartGame();
+                        displayBoard();
                     }
                     else
                     {
@@ -132,21 +129,168 @@ namespace FlippedTicTacToeInterface
             Console.WriteLine("Thanks for playing! Goodbye :)");
         }
 
-        private static void displayBoard()
+        private void displayGameOverScreen(eGameStatus i_GameStatus)
         {
-            eSymbols[,] board = s_GameEngine.GameBoard.Board;
+            switch(i_GameStatus)
+            {
+                case eGameStatus.Player1Win:
+                    displayWinner(1);
+                    break;
+                case eGameStatus.Player2Win:
+                    displayWinner(2);
+                    break;
+                case eGameStatus.Draw:
+                    Console.WriteLine("It's a draw!");
+                    break;
+            }
+
+            displayScore();
+        }
+
+        private void displayWinner(int i_WinnerId)
+        {
+            Console.WriteLine($"The winner of this round is player {i_WinnerId}!");
+        }
+
+        private void displayScore()
+        {
+            Console.WriteLine("Current score:");
+            Console.WriteLine($"Player 1 - {m_GameEngine.Player1.Score}");
+            Console.WriteLine($"Player 2 - {m_GameEngine.Player2.Score}");
+        }
+
+        private void playNextMove()
+        {
+            if(m_GameEngine.CurrentPlayer.IsComputer)
+            {
+                m_GameEngine.MakeRandomMove();
+            }
+            else
+            {
+                bool isValidMove = false;
+
+                while(!isValidMove)
+                {
+                    try
+                    {
+                        Cell selectedCell = getNextUserMove();
+
+                        m_GameEngine.MakeMove(selectedCell);
+                        isValidMove = true;
+                    }
+                    catch(Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Try again!");
+                    }
+                }
+
+            }
+        }
+
+        private uint getRowNumberFromUser()
+        {
+            uint rowNumber = default;
+            bool waitingForValidInput = true;
+
+            while (waitingForValidInput)
+            {
+                try
+                {
+                    string rowNumberString = UserInputRequester.RequestUserNextMoveRow();
+                    rowNumber = uint.Parse(rowNumberString);
+                    waitingForValidInput = false;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Try again!");
+                }
+            }
+
+            return rowNumber;
+        }
+
+        private uint getColNumberFromUser()
+        {
+            uint colNumber = default;
+            bool waitingForValidInput = true;
+
+            while (waitingForValidInput)
+            {
+                try
+                {
+                    string colNumberString = UserInputRequester.RequestUserNextMoveColumn();
+                    colNumber = uint.Parse(colNumberString);
+                    waitingForValidInput = false;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Try again!");
+                }
+            }
+
+            return colNumber;
+        }
+
+        private Cell getNextUserMove()
+        {
+
+            uint row = getRowNumberFromUser();
+            uint col = getColNumberFromUser();
+
+            return new Cell(row, col);
+        }
+
+        private bool askUserIfShouldRestartGame()
+        {
+            bool waitingForValidInput = true;
+            bool shouldRestart = default;
+
+            while (waitingForValidInput) 
+            {
+                string userInput = UserInputRequester.RequestGameRestartInput();
+                bool isInputValid = UserInputValidator.ValidateYesOrNoInput(userInput);
+
+                if (isInputValid)
+                {
+                    shouldRestart = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
+                    waitingForValidInput = false;
+                }
+                else
+                {
+                    Console.WriteLine("Invalid response");
+                    Console.WriteLine("Try again!");
+                }
+            }
+           
+
+            return shouldRestart;
+        }
+
+        private void displayBoard()
+        {
+            eSymbols[,] board = m_GameEngine.GameBoard.Board;
 
             Screen.Clear();
             GameConsoleUtils.PrintBoard(board);
         }
 
-        private static void setInitialGameSettings()
+        private void setInitialGameSettings()
         {
             setGameBoard();
             setPlayers();
         }
 
-        private static void setGameBoard()
+        private void displayStartingAnnouncement()
+        {
+            Console.WriteLine("Everything is ready, let's start!");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+        }
+
+        private void setGameBoard()
         {
             bool waitingForValidInput = true;
 
@@ -161,7 +305,7 @@ namespace FlippedTicTacToeInterface
                     {
                         uint boardSize = uint.Parse(userInput);
 
-                        s_GameEngine.SetGameBoardSize(boardSize);
+                        m_GameEngine.SetGameBoardSize(boardSize);
                         waitingForValidInput = false;
                     }
                 }
@@ -173,18 +317,18 @@ namespace FlippedTicTacToeInterface
             }
         }
 
-        private static void setPlayers()
+        private void setPlayers()
         {
             setFirstPlayer();
             setSecondPlayer();
         }
 
-        private static void setFirstPlayer()
+        private void setFirstPlayer()
         {
-            s_GameEngine.SetFirstPlayer();
+            m_GameEngine.SetFirstPlayer();
         }
 
-        private static void setSecondPlayer()
+        private void setSecondPlayer()
         {
             bool waitingForValidInput = true;
 
@@ -199,7 +343,7 @@ namespace FlippedTicTacToeInterface
                     {
                         bool usersAnswer = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
 
-                        s_GameEngine.SetSecondPlayer(usersAnswer);
+                        m_GameEngine.SetSecondPlayer(!usersAnswer);
                         waitingForValidInput = false;
                     }
                 }
