@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C0D20469-E49E-4EC6-997A-8C20CF7C2D4C}</ProjectGuid>
+    <ProjectGuid>{0413726B-D9A7-4F55-8546-520BEE06ED85}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FlippedTicTacToe</RootNamespace>
-    <AssemblyName>FlippedTicTacToe</AssemblyName>
+    <RootNamespace>FlippedTicTacToeInterface</RootNamespace>
+    <AssemblyName>FlippedTicTacToeInterface</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -36,13 +36,21 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
-    <Compile Include="GameBoard.cs" />
-    <Compile Include="GameEngine.cs" />
-    <Compile Include="GameStatus.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="GameConsoleUtils.cs" />
+    <Compile Include="GameInterface.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Symbols.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FlippedTicTacToe\FlippedTicTacToe.csproj">
+      <Project>{c0d20469-e49e-4ec6-997a-8c20cf7c2d4c}</Project>
+      <Name>FlippedTicTacToe</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Ex02.ConsoleUtils, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\..\..\Temp\Ex02.ConsoleUtils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

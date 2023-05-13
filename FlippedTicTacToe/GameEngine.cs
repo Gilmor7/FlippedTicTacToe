@@ -21,6 +21,22 @@ namespace FlippedTicTacToe
             }
         }
 
+        public Player Player1
+        {
+            get
+            {
+                return m_Player1;
+            }
+        }
+
+        public Player Player2
+        {
+            get
+            {
+                return m_Player2;
+            }
+        }
+
         public eGameStatus GameStatus
         {
             get
@@ -29,9 +45,35 @@ namespace FlippedTicTacToe
             }
         }
 
-        public GameBoard GetGameBoard()
+        public GameBoard GameBoard
         {
-            return m_Board;
+            get
+            {
+                return m_Board;
+            }
+        }
+
+        public void SetGameBoardSize(uint i_BoardSize)
+        {
+            if (RulesValidator.IsBoardSizeValid(i_BoardSize))
+            {
+                m_Board = new GameBoard(i_BoardSize);
+            }
+            else
+            {
+                throw new ArgumentException("Board size must be in range of 3-9 (inclusive)!");
+            }
+        }
+
+        public void SetFirstPlayer()
+        {
+            m_Player1 = new Player(eSymbols.X, false);
+            m_CurrentPlayer = m_Player1;
+        }
+
+        public void SetSecondPlayer(bool i_IsComputer)
+        {
+            m_Player2 = new Player(eSymbols.O, i_IsComputer);
         }
 
         public void RestartGame()
@@ -51,9 +93,10 @@ namespace FlippedTicTacToe
             try
             {
                 bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell.Row, i_SelectedCell.Column);
+
                 if(!isCellEmpty)
                 {
-                    throw new Exception("The specified cell is already taken");
+                    throw new ArgumentException("The specified cell is already taken");
                 }
 
                 m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
@@ -70,6 +113,7 @@ namespace FlippedTicTacToe
         {
             List<Cell> availableCells = m_Board.GetAllAvailableCells();
             Cell selectedCell = selectRandomCellFromList(availableCells);
+
             m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
             updateGameStatusAndScoreIfNeeded(selectedCell);
             switchCurrentPlayer();
@@ -86,7 +130,7 @@ namespace FlippedTicTacToe
         private void updateGameStatusAndScoreIfNeeded(Cell i_SelectedCell)
         {
             bool isCurrentPlayerLoose = checkIfCurrentPlayerLoose(i_SelectedCell);
-            bool isBoardFull = m_Board.isBoardFull();
+            bool isBoardFull = m_Board.IsBoardFull();
 
             if (isCurrentPlayerLoose)
             {
@@ -131,7 +175,7 @@ namespace FlippedTicTacToe
 
         public class RulesValidator
         { 
-            public static bool IsBoardSizeValid(int i_BoardSize)
+            public static bool IsBoardSizeValid(uint i_BoardSize)
             {
                 return i_BoardSize >= k_MinBoardSize && i_BoardSize <= k_MaxBoardSize;
             }
