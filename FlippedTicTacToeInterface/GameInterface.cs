@@ -8,56 +8,6 @@ namespace FlippedTicTacToeInterface
     {
         private GameEngine m_GameEngine = new GameEngine();
 
-        private class UserInputValidator
-        {
-            public static bool ValidateYesOrNoInput(string i_UserInput)
-            {
-                string userInputUpperCase = i_UserInput.ToUpper();
-                return userInputUpperCase == "Y" || userInputUpperCase == "N";
-            }
-
-            public static bool ValidateBoardInput(string i_BoardSize)
-            {
-                uint boardSize;
-                return uint.TryParse(i_BoardSize, out boardSize);
-            }
-
-        }
-
-        private class UserInputRequester
-        {
-            public static string RequestBoardSizeInput()
-            {
-                Console.WriteLine("Enter desired board size: ");
-                return Console.ReadLine();
-            }
-
-            public static string RequestGameRestartInput()
-            {
-                Console.WriteLine("Do you want to play again? [Y/N]");
-                return Console.ReadLine();
-            }
-
-            public static string RequestIfSecondPlayerIsBot()
-            {
-                Console.WriteLine("Do you want to play against a real player? [Y/N]");
-                return Console.ReadLine();
-            }
-
-            public static string RequestUserNextMoveColumn()
-            {
-                Console.WriteLine("Enter column number: ");
-                return Console.ReadLine();
-            }
-
-            public static string RequestUserNextMoveRow()
-            {
-                Console.WriteLine("Enter row number: ");
-                return Console.ReadLine();
-            }
-
-        }
-
         internal class UserInterfaceConverter
         {
             public static bool ConvertYesOrNoToBool(string i_UserInput)
@@ -97,15 +47,28 @@ namespace FlippedTicTacToeInterface
             }
         }
 
-        public void InitGame()
+        private string askForUserInput(string i_OutputMessage)
+        {
+            Console.WriteLine(i_OutputMessage);
+            return Console.ReadLine();
+        }
+
+        private static bool validateYesOrNoInput(string i_UserInput)
+        {
+            string userInputUpperCase = i_UserInput.ToUpper();
+            return userInputUpperCase == "Y" || userInputUpperCase == "N";
+        }
+
+        public void StartGame()
         {
             bool stillPlaying = true;
 
             setInitialGameSettings();
             displayStartingAnnouncement();
-            displayBoard();
             while (stillPlaying)
             {
+                displayBoard();
+                displayCurrentPlayerTurn();
                 playNextMove();
                 displayBoard();
                 if (m_GameEngine.GameStatus != eGameStatus.InProgress)
@@ -116,7 +79,6 @@ namespace FlippedTicTacToeInterface
                     if (shouldRestartGame)
                     {
                         m_GameEngine.RestartGame();
-                        displayBoard();
                     }
                     else
                     {
@@ -190,53 +152,45 @@ namespace FlippedTicTacToeInterface
 
         private uint getRowNumberFromUser()
         {
-            uint rowNumber = default;
-            bool waitingForValidInput = true;
+            const bool k_WaitingForValidInput = true;
 
-            while (waitingForValidInput)
+            while (k_WaitingForValidInput)
             {
-                try
+                string rowNumberString = askForUserInput("Enter row number: ");
+                bool parseWasOk = uint.TryParse(rowNumberString, out uint rowNumber);
+                if (parseWasOk)
                 {
-                    string rowNumberString = UserInputRequester.RequestUserNextMoveRow();
-                    rowNumber = uint.Parse(rowNumberString);
-                    waitingForValidInput = false;
+                    return rowNumber;
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("Try again!");
+                    Console.WriteLine("Invalid input. Try again!");
                 }
             }
-
-            return rowNumber;
         }
 
         private uint getColNumberFromUser()
         {
-            uint colNumber = default;
-            bool waitingForValidInput = true;
+            const bool k_WaitingForValidInput = true;
 
-            while (waitingForValidInput)
+            while (k_WaitingForValidInput)
             {
-                try
+                string colNumberString = askForUserInput("Enter row number: ");
+                bool isParseOk = uint.TryParse(colNumberString, out uint colNumber);
+                if (isParseOk)
                 {
-                    string colNumberString = UserInputRequester.RequestUserNextMoveColumn();
-                    colNumber = uint.Parse(colNumberString);
-                    waitingForValidInput = false;
+                    return colNumber;
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("Try again!");
+                    Console.WriteLine("Invalid input. Try again!");
                 }
             }
-
-            return colNumber;
         }
 
         private Cell getNextUserMove()
         {
-
+            Player currPlayer = m_GameEngine.CurrentPlayer;
             uint row = getRowNumberFromUser();
             uint col = getColNumberFromUser();
 
@@ -245,18 +199,16 @@ namespace FlippedTicTacToeInterface
 
         private bool askUserIfShouldRestartGame()
         {
-            bool waitingForValidInput = true;
-            bool shouldRestart = default;
+            const bool k_WaitingForValidInput = true;
 
-            while (waitingForValidInput) 
+            while (k_WaitingForValidInput)
             {
-                string userInput = UserInputRequester.RequestGameRestartInput();
-                bool isInputValid = UserInputValidator.ValidateYesOrNoInput(userInput);
+                string userInput = askForUserInput("Do you want to play again? [Y/N]");
+                bool isInputValid = validateYesOrNoInput(userInput);
 
                 if (isInputValid)
                 {
-                    shouldRestart = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
-                    waitingForValidInput = false;
+                    return UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
                 }
                 else
                 {
@@ -264,9 +216,6 @@ namespace FlippedTicTacToeInterface
                     Console.WriteLine("Try again!");
                 }
             }
-           
-
-            return shouldRestart;
         }
 
         private void displayBoard()
@@ -275,6 +224,19 @@ namespace FlippedTicTacToeInterface
 
             Screen.Clear();
             GameConsoleUtils.PrintBoard(board);
+        }
+
+        private void displayCurrentPlayerTurn()
+        {
+            Player currentPlayer = m_GameEngine.CurrentPlayer;
+            if(currentPlayer == m_GameEngine.Player1)
+            {
+                Console.WriteLine("Player 1 turn!");
+            }
+            else
+            {
+                Console.WriteLine("Player 2 turn!");
+            }
         }
 
         private void setInitialGameSettings()
@@ -292,27 +254,20 @@ namespace FlippedTicTacToeInterface
 
         private void setGameBoard()
         {
-            bool waitingForValidInput = true;
-
-            while (waitingForValidInput)
+            const bool k_WaitingForValidInput = true;
+            while (k_WaitingForValidInput)
             {
-                try
+                string userInput = askForUserInput("Enter desired board size: ");
+                bool isParseOk = uint.TryParse(userInput, out uint boardSize);
+
+                if (isParseOk)
                 {
-                    string userInput = UserInputRequester.RequestBoardSizeInput();
-                    bool isInputValid = UserInputValidator.ValidateBoardInput(userInput);
-
-                    if (isInputValid)
-                    {
-                        uint boardSize = uint.Parse(userInput);
-
-                        m_GameEngine.SetGameBoardSize(boardSize);
-                        waitingForValidInput = false;
-                    }
+                    m_GameEngine.SetGameBoardSize(boardSize);
+                    break;
                 }
-                catch (Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("Try again!");
+                    Console.WriteLine("Invalid input. Try again!");
                 }
             }
         }
@@ -330,29 +285,25 @@ namespace FlippedTicTacToeInterface
 
         private void setSecondPlayer()
         {
-            bool waitingForValidInput = true;
+            const bool k_WaitingForValidInput = true;
 
-            while (waitingForValidInput)
+            while (k_WaitingForValidInput)
             {
-                try
+                string userInput = askForUserInput("Do you want to play against the computer? [Y/N]");
+                bool isInputValid = validateYesOrNoInput(userInput);
+
+                if (isInputValid)
                 {
-                    string userInput = UserInputRequester.RequestIfSecondPlayerIsBot();
-                    bool isInputValid = UserInputValidator.ValidateYesOrNoInput(userInput);
-
-                    if (isInputValid)
-                    {
-                        bool usersAnswer = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
-
-                        m_GameEngine.SetSecondPlayer(!usersAnswer);
-                        waitingForValidInput = false;
-                    }
+                    bool usersAnswer = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
+                    m_GameEngine.SetSecondPlayer(!usersAnswer);
+                    break;
                 }
-                catch(Exception e)
+                else
                 {
-                    Console.WriteLine(e.Message);
-                    Console.WriteLine("Try again!");
+                    Console.WriteLine("Invalid input. Try again!");
                 }
             }
         }
-    }   
+
+    }
 }
