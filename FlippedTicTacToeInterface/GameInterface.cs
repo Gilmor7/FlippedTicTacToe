@@ -155,6 +155,10 @@ namespace FlippedTicTacToeInterface
                         m_GameEngine.MakeMove(selectedCell);
                         isValidMove = true;
                     }
+                    catch(PlayerQuitException e)
+                    {
+                        throw new PlayerQuitException();
+                    }
                     catch(Exception e)
                     {
                         Console.WriteLine(e.Message);
@@ -167,7 +171,7 @@ namespace FlippedTicTacToeInterface
 
         private void throwIfUserQuit(string i_UserInput)
         {
-            if(i_UserInput == "Q")
+            if(i_UserInput.ToUpper() == "Q")
             {
                 throw new PlayerQuitException();
             }

@@ -108,7 +108,7 @@ namespace FlippedTicTacToe
                 updateGameStatusAndScoreIfNeeded(i_SelectedCell);
                 switchCurrentPlayer();
             }
-            catch(Exception e)
+            catch(IndexOutOfRangeException e)
             {
                 throw e;
             }
