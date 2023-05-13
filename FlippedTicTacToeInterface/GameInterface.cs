@@ -175,7 +175,7 @@ namespace FlippedTicTacToeInterface
 
             while (k_WaitingForValidInput)
             {
-                string colNumberString = askForUserInput("Enter row number: ");
+                string colNumberString = askForUserInput("Enter col number: ");
                 bool isParseOk = uint.TryParse(colNumberString, out uint colNumber);
                 if (isParseOk)
                 {
@@ -262,8 +262,16 @@ namespace FlippedTicTacToeInterface
 
                 if (isParseOk)
                 {
-                    m_GameEngine.SetGameBoardSize(boardSize);
-                    break;
+                    try
+                    {
+                        m_GameEngine.SetGameBoardSize(boardSize);
+                        break;
+                    }
+                    catch(ArgumentException e)
+                    {
+                        Console.WriteLine(e.Message);
+                        Console.WriteLine("Try again!");
+                    }
                 }
                 else
                 {
@@ -295,7 +303,7 @@ namespace FlippedTicTacToeInterface
                 if (isInputValid)
                 {
                     bool usersAnswer = UserInterfaceConverter.ConvertYesOrNoToBool(userInput);
-                    m_GameEngine.SetSecondPlayer(!usersAnswer);
+                    m_GameEngine.SetSecondPlayer(usersAnswer);
                     break;
                 }
                 else
