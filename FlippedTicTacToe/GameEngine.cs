@@ -55,7 +55,7 @@ namespace FlippedTicTacToe
 
         public void SetGameBoardSize(uint i_BoardSize)
         {
-            if (RulesValidator.IsBoardSizeValid(i_BoardSize))
+            if (isBoardSizeValid(i_BoardSize))
             {
                 m_Board = new GameBoard(i_BoardSize);
             }
@@ -76,6 +76,11 @@ namespace FlippedTicTacToe
             m_Player2 = new Player(eSymbols.O, i_IsComputer);
         }
 
+        public void ForfeitCurrPlayer()
+        {
+            checkWhoLostAndUpdateGameSettings();
+        }
+
         public void RestartGame()
         {
             m_Board.ResetBoard();
@@ -92,14 +97,14 @@ namespace FlippedTicTacToe
         {
             try
             {
-                bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell.Row, i_SelectedCell.Column);
+                bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell);
 
                 if(!isCellEmpty)
                 {
                     throw new ArgumentException("The specified cell is already taken");
                 }
 
-                m_Board.UpdateCell(i_SelectedCell.Row, i_SelectedCell.Column, m_CurrentPlayer.Symbol);
+                m_Board.UpdateCell(i_SelectedCell, m_CurrentPlayer.Symbol);
                 updateGameStatusAndScoreIfNeeded(i_SelectedCell);
                 switchCurrentPlayer();
             }
@@ -114,7 +119,7 @@ namespace FlippedTicTacToe
             List<Cell> availableCells = m_Board.GetAllAvailableCells();
             Cell selectedCell = selectRandomCellFromList(availableCells);
 
-            m_Board.UpdateCell(selectedCell.Row, selectedCell.Column, m_CurrentPlayer.Symbol);
+            m_Board.UpdateCell(selectedCell, m_CurrentPlayer.Symbol);
             updateGameStatusAndScoreIfNeeded(selectedCell);
             switchCurrentPlayer();
         }
@@ -134,20 +139,25 @@ namespace FlippedTicTacToe
 
             if (isCurrentPlayerLoose)
             {
-                if(m_CurrentPlayer == m_Player1)
-                {
-                    m_GameStatus = eGameStatus.Player2Win;
-                    m_Player2.Score++;
-                }
-                else
-                {
-                    m_GameStatus = eGameStatus.Player1Win;
-                    m_Player1.Score++;
-                }
+                checkWhoLostAndUpdateGameSettings();
             }
             else if (isBoardFull)
             {
                 m_GameStatus = eGameStatus.Draw;
+            }
+        }
+
+        private void checkWhoLostAndUpdateGameSettings()
+        {
+            if (m_CurrentPlayer == m_Player1)
+            {
+                m_GameStatus = eGameStatus.Player2Win;
+                m_Player2.Score++;
+            }
+            else
+            {
+                m_GameStatus = eGameStatus.Player1Win;
+                m_Player1.Score++;
             }
         }
 
@@ -173,13 +183,10 @@ namespace FlippedTicTacToe
             return isSingleSymbolFullSequenceFound;
         }
 
-        public class RulesValidator
-        { 
-            public static bool IsBoardSizeValid(uint i_BoardSize)
-            {
-                return i_BoardSize >= k_MinBoardSize && i_BoardSize <= k_MaxBoardSize;
-            }
+        private static bool isBoardSizeValid(uint i_BoardSize)
+        {
+            return i_BoardSize >= k_MinBoardSize && i_BoardSize <= k_MaxBoardSize;
         }
-     
+
     }
 }
