@@ -42,16 +42,16 @@ namespace FlippedTicTacToe
             }
         }
 
-        public eSymbols GetSymbolAtIndex(uint i_Row, uint i_Col)
+        public eSymbols GetSymbolAtIndex(Cell i_Cell)
         {
-            bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+            bool indicesAreValid = checkIfIndicesAreInRange(i_Cell);
 
             if (!indicesAreValid)
             {
                 throw new IndexOutOfRangeException("Indices are out of range!");
             }
            
-            return m_GameBoard[i_Row, i_Col];
+            return m_GameBoard[i_Cell.Row, i_Cell.Column];
         }
 
         public void ResetBoard()
@@ -67,14 +67,14 @@ namespace FlippedTicTacToe
             m_NumberOfEmptyCells = m_MatrixWidth * m_MatrixWidth;
         }
 
-        public void UpdateCell(uint i_Row, uint i_Col, eSymbols i_Symbol)
+        public void UpdateCell(Cell i_Cell, eSymbols i_Symbol)
         {
-            bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+            bool indicesAreValid = checkIfIndicesAreInRange(i_Cell);
 
             if (indicesAreValid)
             {
-                updateNumberOfEmptyCells(m_GameBoard[i_Row, i_Col], i_Symbol);
-                m_GameBoard[i_Row, i_Col] = i_Symbol;
+                updateNumberOfEmptyCells(m_GameBoard[i_Cell.Row, i_Cell.Column], i_Symbol);
+                m_GameBoard[i_Cell.Row, i_Cell.Column] = i_Symbol;
             }
             else
             {
@@ -82,13 +82,13 @@ namespace FlippedTicTacToe
             }
         }
 
-        public bool CheckIfCellIsEmpty(uint i_Row, uint i_Col)
+        public bool CheckIfCellIsEmpty(Cell i_Cell)
         {
-            bool indicesAreValid = checkIfIndicesAreInRange(i_Row, i_Col);
+            bool indicesAreValid = checkIfIndicesAreInRange(i_Cell);
 
             if (indicesAreValid)
             {
-                return m_GameBoard[i_Row, i_Col] == eSymbols.Empty;
+                return m_GameBoard[i_Cell.Row, i_Cell.Column] == eSymbols.Empty;
             }
             else
             {
@@ -96,10 +96,10 @@ namespace FlippedTicTacToe
             }
         }
 
-        private bool checkIfIndicesAreInRange(uint i_Row, uint i_Col)
+        private bool checkIfIndicesAreInRange(Cell i_Cell)
         {
-            bool rowCheck = checkIfIndexIsInRange(i_Row);
-            bool colCheck = checkIfIndexIsInRange(i_Col);
+            bool rowCheck = checkIfIndexIsInRange(i_Cell.Row);
+            bool colCheck = checkIfIndexIsInRange(i_Cell.Column);
 
             return rowCheck && colCheck;
         }
