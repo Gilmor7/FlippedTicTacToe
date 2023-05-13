@@ -8,6 +8,13 @@ namespace FlippedTicTacToeInterface
     {
         private GameEngine m_GameEngine = new GameEngine();
 
+        private class PlayerQuitException : Exception
+        {
+            public PlayerQuitException() : base("Player has quit the game.")
+            {
+            }
+        }
+
         internal class UserInterfaceConverter
         {
             public static bool ConvertYesOrNoToBool(string i_UserInput)
@@ -69,7 +76,15 @@ namespace FlippedTicTacToeInterface
             {
                 displayBoard();
                 displayCurrentPlayerTurn();
-                playNextMove();
+                try
+                {
+                    playNextMove();
+                }
+                catch(PlayerQuitException e)
+                {
+                    m_GameEngine.ForfeitCurrPlayer();
+                    
+                }
                 displayBoard();
                 if (m_GameEngine.GameStatus != eGameStatus.InProgress)
                 {
@@ -125,7 +140,7 @@ namespace FlippedTicTacToeInterface
         {
             if(m_GameEngine.CurrentPlayer.IsComputer)
             {
-                m_GameEngine.MakeRandomMove();
+                 m_GameEngine.MakeRandomMove();
             }
             else
             {
@@ -150,14 +165,23 @@ namespace FlippedTicTacToeInterface
             }
         }
 
+        private void throwIfUserQuit(string i_UserInput)
+        {
+            if(i_UserInput == "Q")
+            {
+                throw new PlayerQuitException();
+            }
+        }
+
         private uint getRowNumberFromUser()
         {
             const bool k_WaitingForValidInput = true;
 
             while (k_WaitingForValidInput)
             {
-                string rowNumberString = askForUserInput("Enter row number: ");
-                bool parseWasOk = uint.TryParse(rowNumberString, out uint rowNumber);
+                string userInputString = askForUserInput("Enter row number: ");
+                throwIfUserQuit(userInputString);
+                bool parseWasOk = uint.TryParse(userInputString, out uint rowNumber);
                 if (parseWasOk)
                 {
                     return rowNumber;
@@ -175,8 +199,9 @@ namespace FlippedTicTacToeInterface
 
             while (k_WaitingForValidInput)
             {
-                string colNumberString = askForUserInput("Enter row number: ");
-                bool isParseOk = uint.TryParse(colNumberString, out uint colNumber);
+                string userInputString = askForUserInput("Enter row number: ");
+                throwIfUserQuit(userInputString);
+                bool isParseOk = uint.TryParse(userInputString, out uint colNumber);
                 if (isParseOk)
                 {
                     return colNumber;
