@@ -95,23 +95,16 @@ namespace FlippedTicTacToe
 
         public void MakeMove(Cell i_SelectedCell)
         {
-            try
-            {
-                bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell);
+            bool isCellEmpty = m_Board.CheckIfCellIsEmpty(i_SelectedCell);
 
-                if(!isCellEmpty)
-                {
-                    throw new ArgumentException("The specified cell is already taken");
-                }
-
-                m_Board.UpdateCell(i_SelectedCell, m_CurrentPlayer.Symbol);
-                updateGameStatusAndScoreIfNeeded(i_SelectedCell);
-                switchCurrentPlayer();
-            }
-            catch(IndexOutOfRangeException e)
+            if(!isCellEmpty)
             {
-                throw e;
+                throw new ArgumentException("The specified cell is already taken");
             }
+
+            m_Board.UpdateCell(i_SelectedCell, m_CurrentPlayer.Symbol);
+            updateGameStatusAndScoreIfNeeded(i_SelectedCell);
+            switchCurrentPlayer();
         }
 
         public void MakeRandomMove()

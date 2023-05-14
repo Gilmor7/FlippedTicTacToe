@@ -40,6 +40,7 @@ namespace FlippedTicTacToeInterface
         public static void DisplayCurrentPlayerTurn(GameEngine i_GameEngine)
         {
             Player currentPlayer = i_GameEngine.CurrentPlayer;
+
             if (currentPlayer == i_GameEngine.Player1)
             {
                 Console.WriteLine("Player 1 turn!");

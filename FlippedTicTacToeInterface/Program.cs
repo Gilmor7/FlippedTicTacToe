@@ -1,12 +1,14 @@
 ﻿using System;
 using FlippedTicTacToe;
 
-
+namespace FlippedTicTacToeInterface
+{
     public class Program
     {
         public static void Main()
         {
-            FlippedTicTacToeInterface.GameInterface gameInterface = new FlippedTicTacToeInterface.GameInterface();
+            GameInterface gameInterface = new GameInterface();
             gameInterface.StartGame();
         }
-    }
+}
+}

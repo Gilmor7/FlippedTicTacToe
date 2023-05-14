@@ -1,5 +1,4 @@
 ﻿using System;
-using Ex02.ConsoleUtils;
 using FlippedTicTacToe;
 
 namespace FlippedTicTacToeInterface
@@ -21,6 +20,7 @@ namespace FlippedTicTacToeInterface
             {
                 bool isYes;
                 string userInputUpperCase = i_UserInput.ToUpper();
+
                 if (userInputUpperCase == "Y")
                 {
                     isYes = true;
@@ -36,6 +36,7 @@ namespace FlippedTicTacToeInterface
             public static char ConvertSymbolToChar(eSymbols i_Symbol)
             {
                 char symbol;
+
                 switch (i_Symbol)
                 {
                     case eSymbols.Empty:
@@ -50,6 +51,7 @@ namespace FlippedTicTacToeInterface
                     default:
                         throw new ArgumentOutOfRangeException(nameof(i_Symbol), i_Symbol, "Invalid symbol value");
                 }
+
                 return symbol;
             }
         }
@@ -82,15 +84,16 @@ namespace FlippedTicTacToeInterface
                 }
                 catch(PlayerQuitException e)
                 {
+                    Console.WriteLine(e.Message);
                     m_GameEngine.ForfeitCurrPlayer();
                     
                 }
+
                 GameConsoleUtils.DisplayBoard(m_GameEngine.GameBoard);
                 if (m_GameEngine.GameStatus != eGameStatus.InProgress)
                 {
                     GameConsoleUtils.DisplayGameOverScreen(m_GameEngine.GameStatus);
-                    GameConsoleUtils.DisplayScore(m_GameEngine.Player1.Score
-                        , m_GameEngine.Player2.Score);
+                    GameConsoleUtils.DisplayScore(m_GameEngine.Player1.Score, m_GameEngine.Player2.Score);
                     bool shouldRestartGame = askUserIfShouldRestartGame();
 
                     if (shouldRestartGame)
@@ -129,7 +132,7 @@ namespace FlippedTicTacToeInterface
                     }
                     catch(PlayerQuitException e)
                     {
-                        throw new PlayerQuitException();
+                        throw;
                     }
                     catch(Exception e)
                     {
@@ -177,6 +180,7 @@ namespace FlippedTicTacToeInterface
             {
                 string colNumberString = askForUserInput("Enter col number: ");
                 bool isParseOk = uint.TryParse(colNumberString, out uint colNumber);
+
                 if (isParseOk)
                 {
                     return colNumber;
@@ -190,7 +194,6 @@ namespace FlippedTicTacToeInterface
 
         private Cell getNextUserMove()
         {
-            Player currPlayer = m_GameEngine.CurrentPlayer;
             uint row = getRowNumberFromUser();
             uint col = getColNumberFromUser();
 
@@ -227,6 +230,7 @@ namespace FlippedTicTacToeInterface
         private void setGameBoard()
         {
             const bool k_WaitingForValidInput = true;
+
             while (k_WaitingForValidInput)
             {
                 string userInput = askForUserInput("Enter desired board size: ");
