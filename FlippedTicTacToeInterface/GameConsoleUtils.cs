@@ -1,4 +1,5 @@
 ﻿using System;
+using Ex02.ConsoleUtils;
 using FlippedTicTacToe;
 
 namespace FlippedTicTacToeInterface
@@ -26,6 +27,65 @@ namespace FlippedTicTacToeInterface
                     printSeparationRow(i_Board.GetLength(0));
                 }
             }
+        }
+
+        public static void DisplayBoard(GameBoard i_GameBoard)
+        {
+            eSymbols[,] board = i_GameBoard.Board;
+
+            Screen.Clear();
+            GameConsoleUtils.PrintBoard(board);
+        }
+
+        public static void DisplayCurrentPlayerTurn(GameEngine i_GameEngine)
+        {
+            Player currentPlayer = i_GameEngine.CurrentPlayer;
+            if (currentPlayer == i_GameEngine.Player1)
+            {
+                Console.WriteLine("Player 1 turn!");
+            }
+            else
+            {
+                Console.WriteLine("Player 2 turn!");
+            }
+        }
+
+        public static void DisplayStartingAnnouncement()
+        {
+            Console.WriteLine("Everything is ready, let's start!");
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+        }
+
+        public static void DisplayGameOverScreen(eGameStatus i_GameStatus)
+        {
+            const byte k_Player1Id = 1;
+            const byte k_Player2Id = 2;
+
+            switch (i_GameStatus)
+            {
+                case eGameStatus.Player1Win:
+                    DisplayWinner(k_Player1Id);
+                    break;
+                case eGameStatus.Player2Win:
+                    DisplayWinner(k_Player2Id);
+                    break;
+                case eGameStatus.Draw:
+                    Console.WriteLine("It's a draw!");
+                    break;
+            }
+        }
+
+        public static void DisplayWinner(byte i_WinnerId)
+        {
+            Console.WriteLine($"The winner of this round is player {i_WinnerId}!");
+        }
+
+        public static void DisplayScore(uint i_Player1Score, uint i_Player2Score)
+        {
+            Console.WriteLine("Current score:");
+            Console.WriteLine($"Player 1 - {i_Player1Score}");
+            Console.WriteLine($"Player 2 - {i_Player2Score}");
         }
 
         private static void printColumnIndexes(int i_Size)
