@@ -71,11 +71,11 @@ namespace FlippedTicTacToeInterface
             bool stillPlaying = true;
 
             setInitialGameSettings();
-            displayStartingAnnouncement();
+            GameConsoleUtils.DisplayStartingAnnouncement();
             while (stillPlaying)
             {
-                displayBoard();
-                displayCurrentPlayerTurn();
+                GameConsoleUtils.DisplayBoard(m_GameEngine.GameBoard);
+                GameConsoleUtils.DisplayCurrentPlayerTurn(m_GameEngine);
                 try
                 {
                     playNextMove();
@@ -85,10 +85,12 @@ namespace FlippedTicTacToeInterface
                     m_GameEngine.ForfeitCurrPlayer();
                     
                 }
-                displayBoard();
+                GameConsoleUtils.DisplayBoard(m_GameEngine.GameBoard);
                 if (m_GameEngine.GameStatus != eGameStatus.InProgress)
                 {
-                    displayGameOverScreen(m_GameEngine.GameStatus);
+                    GameConsoleUtils.DisplayGameOverScreen(m_GameEngine.GameStatus);
+                    GameConsoleUtils.DisplayScore(m_GameEngine.Player1.Score
+                        , m_GameEngine.Player2.Score);
                     bool shouldRestartGame = askUserIfShouldRestartGame();
 
                     if (shouldRestartGame)
@@ -104,36 +106,6 @@ namespace FlippedTicTacToeInterface
             }
 
             Console.WriteLine("Thanks for playing! Goodbye :)");
-        }
-
-        private void displayGameOverScreen(eGameStatus i_GameStatus)
-        {
-            switch(i_GameStatus)
-            {
-                case eGameStatus.Player1Win:
-                    displayWinner(1);
-                    break;
-                case eGameStatus.Player2Win:
-                    displayWinner(2);
-                    break;
-                case eGameStatus.Draw:
-                    Console.WriteLine("It's a draw!");
-                    break;
-            }
-
-            displayScore();
-        }
-
-        private void displayWinner(int i_WinnerId)
-        {
-            Console.WriteLine($"The winner of this round is player {i_WinnerId}!");
-        }
-
-        private void displayScore()
-        {
-            Console.WriteLine("Current score:");
-            Console.WriteLine($"Player 1 - {m_GameEngine.Player1.Score}");
-            Console.WriteLine($"Player 2 - {m_GameEngine.Player2.Score}");
         }
 
         private void playNextMove()
@@ -246,38 +218,10 @@ namespace FlippedTicTacToeInterface
             }
         }
 
-        private void displayBoard()
-        {
-            eSymbols[,] board = m_GameEngine.GameBoard.Board;
-
-            Screen.Clear();
-            GameConsoleUtils.PrintBoard(board);
-        }
-
-        private void displayCurrentPlayerTurn()
-        {
-            Player currentPlayer = m_GameEngine.CurrentPlayer;
-            if(currentPlayer == m_GameEngine.Player1)
-            {
-                Console.WriteLine("Player 1 turn!");
-            }
-            else
-            {
-                Console.WriteLine("Player 2 turn!");
-            }
-        }
-
         private void setInitialGameSettings()
         {
             setGameBoard();
             setPlayers();
-        }
-
-        private void displayStartingAnnouncement()
-        {
-            Console.WriteLine("Everything is ready, let's start!");
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
         }
 
         private void setGameBoard()
